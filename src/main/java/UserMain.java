@@ -1,13 +1,14 @@
-import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
-public class HelloWorld {
+public class UserMain {
 
     public static void main(String[] args) {
         staticFiles.location("/static");
@@ -22,12 +23,16 @@ public class HelloWorld {
 
         // localhost:4567/hello?name={name} 요청
         // "Hello {name} 응답
-        get("/hello", (req, res) -> "Hello " + req.queryParams("name") + " 나이는 " + req.queryParams("age"));
+        // get("/hello", (req, res) -> "Hello " + req.queryParams("name") + " 나이는 " + req.queryParams("age"));
 
-        post("/hello", (req, res) -> {
+        List<User> users = new ArrayList<>();
+
+        post("/users", (req, res) -> {
+            User user = new User(req.queryParams("name"), req.queryParams("age"));
+            users.add(user);
+
             Map<String, Object> model = new HashMap<>();
-            model.put("name", req.queryParams("name"));
-            model.put("age", req.queryParams("age"));
+            model.put("users", users);
 
             return render(model, "result.html");
         });
